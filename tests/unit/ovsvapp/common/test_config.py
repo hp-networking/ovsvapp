@@ -19,7 +19,7 @@ from oslo.config import cfg
 import shutil
 import tempfile
 
-from neutron.plugins.ovsvapp import config
+from neutron.plugins.ovsvapp.common import config
 from neutron.tests.unit.ovsvapp import test
 
 CONF = cfg.CONF
