@@ -91,7 +91,7 @@ class VcenterManager(base_manager.DriverManager):
         """
         try:
             tuples = []
-            LOG.debug(_("Parsing cluster_dvs_mapping %s"), entry)
+            LOG.debug("Parsing cluster_dvs_mapping %s", entry)
             mappings = entry.split(",")
             for mapping in mappings:
                 cluster = None

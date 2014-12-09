@@ -69,7 +69,7 @@ class DvsNetworkDriver(vc_driver.VCNetworkDriver):
     def _wait_for_port_update_on_vm(self, vm_mor, pgmor):
         property_collector = None
         try:
-            LOG.debug(_("Creating new property collector"))
+            LOG.debug("Creating new property collector")
             property_collector = self.\
                 session._call_method(vim_util,
                                      "create_property_collector")

@@ -239,15 +239,15 @@ def wait_on_dvs_portgroup(session, vm_ref, pg_name):
                                                  network._type,
                                                  "config")
                     if props.name in pg_name:
-                        LOG.debug(_("DistributedVirtualPortgroup %s "
-                                    "created") % pg_name)
+                        LOG.debug("DistributedVirtualPortgroup %s ",
+                                  "created" % pg_name)
                         return True
         count += 1
-        LOG.debug(_("Portgroup %s not created yet. Retrying again "
-                    "after 2 seconds") % pg_name)
+        LOG.debug("Portgroup %s not created yet. Retrying again "
+                  "after 2 seconds" % pg_name)
         greenthread.sleep(2)
     if count == max_counts:
-        LOG.debug(_("Tried max times, but portgroup %s not created") % pg_name)
+        LOG.debug("Tried max times, but portgroup %s not created" % pg_name)
     return False
 
 

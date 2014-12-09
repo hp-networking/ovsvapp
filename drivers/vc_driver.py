@@ -231,7 +231,7 @@ class VCNetworkDriver(driver.NetworkDriver):
             self.state = driver.State.RUNNING
             while self.state in (driver.State.RUNNING):
                 try:
-                    LOG.debug(_("Waiting for vCenter updates..."))
+                    LOG.debug("Waiting for vCenter updates...")
                     try:
                         updateSet = self.session.\
                             _call_method(vim_util,
@@ -245,7 +245,7 @@ class VCNetworkDriver(driver.NetworkDriver):
                     if updateSet:
                         version = updateSet.version
                         events = self._process_update_set(updateSet)
-                        LOG.debug(_("Sending events : %s"), events)
+                        LOG.debug("Sending events : %s", events)
                         self.dispatch_events(events)
                 except error_util.VimFaultException as e:
                     excp = e.exception_obj
@@ -255,9 +255,9 @@ class VCNetworkDriver(driver.NetworkDriver):
                         # Re-initialize WaitForUpdatesEx
                         if hasattr(excp.fault.detail,
                                    "InvalidCollectorVersionFault"):
-                            LOG.debug(_("InvalidCollectorVersionFault - "
+                            LOG.debug("InvalidCollectorVersionFault - "
                                       "Re-initializing vCenter updates "
-                                      "monitoring"))
+                                      "monitoring")
                             version = ""
                             for cluster_mor in self.clusters_by_id.values():
                                 pfo = self.\
@@ -282,7 +282,7 @@ class VCNetworkDriver(driver.NetworkDriver):
         host_name = None
         clus_name = None
         clus_id = None
-        LOG.debug(_("Processing UpdateSet version %s"), updateSet.version)
+        LOG.debug("Processing UpdateSet version %s", updateSet.version)
         filterSet = updateSet.filterSet
         if not filterSet:
             return events
@@ -387,9 +387,9 @@ class VCNetworkDriver(driver.NetworkDriver):
                     LOG.debug("cache.VCCache.vm_uuid_to_model %s",
                               cache.VCCache.vm_uuid_to_model)
                 else:
-                    LOG.debug(_("Ignoring update for VM %s"),
+                    LOG.debug("Ignoring update for VM %s",
                               changes.get('name'))
-        LOG.debug(_("Finished processing UpdateSet version %s"),
+        LOG.debug("Finished processing UpdateSet version %s",
                   updateSet.version)
         return events
 
