@@ -133,9 +133,7 @@ class OVSvAppServerRpcCallback(n_rpc.RpcCallback):
 class OVSvAppAgentNotifyAPI(n_rpc.RpcProxy):
 
     """
-    This BASE RPC VERSION here should match with the version
-    in ml2.rpc.AgentNotifierAPI, for this calls to execute on the
-    OVSvApp Agent
+    Agent side of the OVSvApp rpc API.
     """
     BASE_RPC_API_VERSION = '1.0'
 
