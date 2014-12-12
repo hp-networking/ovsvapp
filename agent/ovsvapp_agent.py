@@ -293,7 +293,7 @@ class OVSvAppL2Agent(agent.Agent, ovs_agent.OVSNeutronAgent,
     """
     OVSvApp L2 Agent
     """
-    RPC_API_VERSION = '1.0'
+    RPC_API_VERSION = '1.1'
 
     def __init__(self):
         agent.Agent.__init__(self)
