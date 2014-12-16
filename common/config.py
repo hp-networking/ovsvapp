@@ -13,10 +13,18 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from neutron.openstack.common import log as logging
 from oslo.config import cfg
 
+LOG = logging.getLogger(__name__)
 
 def parse(args):
     cfg.CONF(args=args, project='neutron',
              default_config_files=["/etc/neutron/plugins/ovsvapp/"
                                    "ovsvapp_agent.ini"])
+
+
+def setup_logging():
+    logging.setup("neutron")
+    logging.getLogger("neutron").logger
+    LOG.debug("Logging setup complete")
