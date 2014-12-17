@@ -698,10 +698,10 @@ class FakeVim(object):
         service_content.sessionManager = "SessionManager"
         service_content.searchIndex = "SearchIndex"
         service_content.dvSwitchManager = "DistributedVirtualSwitchManager"
-        self._service_content = service_content
+        self.service_content = service_content
 
     def get_service_content(self):
-        return self._service_content
+        return self.service_content
 
     def __repr__(self):
         return "Fake VIM Object"
@@ -939,18 +939,6 @@ class FakeVim(object):
             return [dvsport]
 
     def _reconfigure_dv_port_task(self, method, *args, **kwargs):
-        vds_ref = _db_content["DistributedVirtualSwitch"][args[0].value]
-        specs = kwargs.get("port")
-        for spec in specs:
-            found = False
-            portKey = spec.key
-            for pg in vds_ref.portgroup.ManagedObjectReference:
-                if portKey in pg.portKeys:
-                    found = True
-                    break
-            if not found:
-                raise Exception("The object or item referred"
-                                " to could not be found.")
         task_mdo = create_task(method, "success")
         return task_mdo.obj
 

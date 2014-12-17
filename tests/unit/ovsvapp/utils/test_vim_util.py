@@ -37,15 +37,6 @@ class VimUtilsTestCase(test.TestCase):
         for spec in trav_specs:
             self.assertIn(spec.name, spec_names)
 
-    def test_build_property_spec(self):
-        client_factory = self.session._get_vim().client.factory
-        prop_spec = vim_util.\
-            build_property_spec(client_factory,
-                                "VirtualMachine", None, False)
-        self.assertFalse(prop_spec.all)
-        self.assertEqual(prop_spec.type, "VirtualMachine")
-        self.assertIn("name", prop_spec.pathSet)
-
     def test_get_property_filter_specs_none_obj(self):
         vim = self.session._get_vim()
         property_dict = {"virtualmachine":
@@ -77,11 +68,3 @@ class VimUtilsTestCase(test.TestCase):
                                                        obj_list,
                                                        properties)
         self.assertEqual(len(objs), 0)
-
-    def test_build_object_spec_none_traversal(self):
-        client_factory = self.session._get_vim().client.factory
-        obj = fake_vmware_api.DataObject()
-        obj_spec = vim_util.build_object_spec(client_factory, obj, None)
-        self.assertFalse(obj_spec.skip)
-        self.assertEqual(obj_spec.obj, obj)
-        self.assertFalse(hasattr(obj_spec, "selectSet"))

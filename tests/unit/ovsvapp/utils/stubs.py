@@ -16,7 +16,9 @@
 
 import fixtures
 from neutron.plugins.ovsvapp.utils import cache
+from neutron.plugins.ovsvapp.utils import error_util
 from neutron.plugins.ovsvapp.utils import vim_session
+from neutron.plugins.ovsvapp.utils import vim_util
 from neutron.tests.unit.ovsvapp.utils import fake_vmware_api
 
 
@@ -28,6 +30,53 @@ def fake_get_vim_object(arg):
 def fake_is_vim_object(arg, module):
     """Stubs out the VMwareAPISession's is_vim_object method."""
     return isinstance(module, fake_vmware_api.FakeVim)
+
+
+@classmethod
+def fake_create_connection(cls):
+    cls.session = FakeVMwareSession(cls.host_ip,
+                                    cls.host_username,
+                                    cls.host_password,
+                                    cls.api_retry_count,
+                                    cls.wsdl_url)
+    return cls.session
+
+
+class FakeVMwareSession(object):
+
+    def __init__(self, host_ip, host_username, host_password,
+                 api_retry_count, wsdl_url, scheme="https", https_port=443,
+                 ca_cert=None):
+        self._host_ip = host_ip
+        self._host_username = host_username
+        self._host_password = host_password
+        self._https_port = https_port
+        self.api_retry_count = api_retry_count
+        self.wsdl_url = wsdl_url
+        self._scheme = scheme
+        self._session_id = None
+        self.vim = fake_get_vim_object("fake_module")
+        session = self.vim.Login(
+                self.vim.get_service_content().sessionManager,
+                userName=self._host_username,
+                password=self._host_password)
+        self._session_id = session.key
+
+    def _get_vim(self):
+        return self.vim
+
+    def _call_method(self, module, method, *args, **kwargs):
+        temp_module = module
+        for method_elem in method.split("."):
+            temp_module = getattr(temp_module, method_elem)
+            return temp_module(self.vim, *args, **kwargs)
+
+    def _wait_for_task(self, task_ref):
+        task_info = self._call_method(vim_util, "get_dynamic_property",
+                                      task_ref, "Task", "info")
+        if task_info.state == "error":
+            raise error_util.RunTimeError("Incorrect Parameter")
+        return
 
 
 class FakeVmware(fixtures.Fixture):
@@ -44,6 +93,9 @@ class FakeVmware(fixtures.Fixture):
         self.useFixture(fixtures.MonkeyPatch(
             'neutron.plugins.ovsvapp.utils.vim_session.'
             'VMWareAPISession._is_vim_object', fake_is_vim_object))
+        self.useFixture(fixtures.MonkeyPatch(
+            'neutron.plugins.hp.agent.hpvcn.virt.vmware.vim_session.'
+            'ConnectionHandler.create_connection', fake_create_connection))
         self.vcenter_ip = "192.168.1.3"
         self.vcenter_username = "user"
         self.vcenter_password = "password"

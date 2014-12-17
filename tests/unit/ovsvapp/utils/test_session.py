@@ -14,12 +14,13 @@
 #    under the License.
 #
 
+import contextlib
+import mock
 from neutron.plugins.ovsvapp.utils import error_util
 from neutron.plugins.ovsvapp.utils import vim_session
 from neutron.plugins.ovsvapp.utils import vim_util
 from neutron.tests.unit.ovsvapp import test
-from neutron.tests.unit.ovsvapp.utils import fake_vmware_api
-from neutron.tests.unit.ovsvapp.utils import stubs
+from oslo.vmware import api
 
 
 class TestVmwareApiSession(test.TestCase):
@@ -31,44 +32,34 @@ class TestVmwareApiSession(test.TestCase):
         self.host_password = "password"
         self.api_retry_count = "2"
         self.wsdl_url = "https://www.vmware.com/sdk/fake.wsdl"
-        self.useFixture(stubs.FakeVmware())
+        with contextlib.nested(
+            mock.patch('oslo.vmware.api.VMwareAPISession.'
+                       '_create_session')
+                       ):
+            self.vm_session = vim_session.VMWareAPISession(self.host_ip,
+                                                        self.host_username,
+                                                        self.host_password,
+                                                        self.api_retry_count,
+                                                        self.wsdl_url)
 
     def test_vmware_api_session(self):
-        session = vim_session.VMWareAPISession(self.host_ip,
-                                               self.host_username,
-                                               self.host_password,
-                                               self.api_retry_count,
-                                               self.wsdl_url)
-        self.assertTrue(session._session_id)
-
-    def test_already_created_session(self):
-        session_old = vim_session.VMWareAPISession(self.host_ip,
-                                                   self.host_username,
-                                                   self.host_password,
-                                                   self.api_retry_count,
-                                                   self.wsdl_url)
-        self.assertTrue(session_old._session_id)
-        session_new = session_old._create_session()
-        self.assertNotEqual(session_old._session_id, session_new)
+        self.assertTrue(self.vm_session)
 
     def test_call_method(self):
-        session = vim_session.VMWareAPISession(self.host_ip,
-                                               self.host_username,
-                                               self.host_password,
-                                               self.api_retry_count,
-                                               self.wsdl_url)
-        host_mor = session._call_method(
-            vim_util, "get_objects", "HostSystem", ['name'])
-        self.assertTrue(isinstance(host_mor[0], fake_vmware_api.ManagedObject))
-        self.assertEqual(host_mor[0].propSet[0].val, "test_host")
+        with contextlib.nested(
+            mock.patch.object(api.VMwareAPISession,
+                              "invoke_api"),
+            mock.patch.object(self.vm_session,
+                              "_is_vim_object",
+                              return_value=True)
+                       ) as (invoke_ob, is_vim_ob):
+            self.vm_session._call_method(vim_util,
+                                         "get_objects",
+                                         "HostSystem", ['name'])
+            self.assertTrue(invoke_ob.called)
 
     def test_wait_for_task_error(self):
-        session = vim_session.VMWareAPISession(self.host_ip,
-                                               self.host_username,
-                                               self.host_password,
-                                               self.api_retry_count,
-                                               self.wsdl_url)
-        task_ref = fake_vmware_api.create_task("test_task", "error")
-        raised = self.assertRaises(error_util.RunTimeError,
-                                   session._wait_for_task, task_ref)
-        self.assertTrue(raised)
+        with mock.patch.object(api.VMwareAPISession,
+                              "wait_for_task") as wait_ob:
+            self.vm_session._wait_for_task("task")
+            self.assertTrue(wait_ob.called)
