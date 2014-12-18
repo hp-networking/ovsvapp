@@ -3,9 +3,9 @@ ovsvapp
 
 Bring in VSphere deployments into Native Openstack Neutron including provision for VLAN, VXLAN, Security-groups.
 
-References
-==========
+Approved Specs for Neutron Kilo Release:
 
-https://review.openstack.org/104452
+OVSvAPP solution for VLAN and security groups : https://review.openstack.org/#/c/141264/
 
-https://review.openstack.org/103728
+OVSvApp Solution for VXLAN overlay: https://review.openstack.org/#/c/141262/
+
