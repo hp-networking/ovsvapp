@@ -264,7 +264,7 @@ def get_objects(vim, type, properties_to_collect=None, all=False):
     client_factory = vim.client.factory
     trav_spec = build_recursive_traversal_spec_root(client_factory)
     object_spec = vim_util.build_object_spec(client_factory,
-                                    vim.get_service_content().rootFolder,
+                                    vim.service_content.rootFolder,
                                     [trav_spec])
     property_spec = \
         vim_util.build_property_spec(client_factory, type=type,
