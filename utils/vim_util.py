@@ -267,7 +267,7 @@ def get_objects(vim, type, properties_to_collect=None, all=False):
                                     vim.service_content.rootFolder,
                                     [trav_spec])
     property_spec = \
-        vim_util.build_property_spec(client_factory, type=type,
+        vim_util.build_property_spec(client_factory, type_=type,
                             properties_to_collect=properties_to_collect,
                             all_properties=all)
     property_filter_spec = vim_util.build_property_filter_spec(client_factory,
