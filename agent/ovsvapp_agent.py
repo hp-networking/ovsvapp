@@ -714,8 +714,6 @@ class OVSvAppL2Agent(agent.Agent, ovs_agent.OVSNeutronAgent,
             vm_id=device_id,
             network_uuid=network_id,
             ipaddresses=fixed_ips,
-            security_groups=security_groups,
-            security_group_rules=None,
             port_status=port_status)
         return network, port
 
