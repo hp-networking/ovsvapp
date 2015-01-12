@@ -73,6 +73,8 @@ OVSVAPPAGENT_OPTS = [
                 help=_("Network types supported by the agent - vxlan")),
     cfg.IntOpt('vxlan_udp_port', default=p_const.VXLAN_UDP_PORT,
                help=_("The UDP port to use for VXLAN tunnels.")),
+    cfg.IntOpt('dont_fragment', default=True,
+               help=_("Dont fragment")),
     cfg.BoolOpt('agent_maintenance', default=False,
                 help=_('Turn on this flag during agent updates to help '
                        'prevent datapath outage')),
@@ -370,6 +372,7 @@ class OVSvAppL2Agent(agent.Agent, ovs_agent.OVSNeutronAgent,
             self.enable_tunneling = True
             self.local_ip = CONF.OVSVAPP.local_ip
             self.vxlan_udp_port = CONF.OVSVAPPAGENT.vxlan_udp_port
+            self.dont_fragment = CONF.OVSVAPPAGENT.dont_fragment
             self.tun_br = None
             if not self.agent_under_maintenance:
                 self.setup_tunnel_br(CONF.OVSVAPP.tunnel_bridge)

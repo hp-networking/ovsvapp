@@ -383,9 +383,7 @@ class OVSFirewallDriver(firewall.FirewallDriver):
     def _get_port_vlan(self, port_id):
         if port_id:
             port = self.filtered_ports.get(port_id)
-            if port and 'segmentation_id' in port:
-                return port['segmentation_id']
-            else:
+            if port:
                 return self.portCache.getPortVlan(port_id)
 
     def _setup_flows(self, deferred_sec_br, port):

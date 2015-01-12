@@ -249,7 +249,9 @@ class TestOVSFirewallDriver(base.BaseTestCase):
             fake_port1["security_group_rules"][0]["protocol"] = None
             fake_port1["security_group_rules"][0]["ethertype"] = 'IPv6'
             self.ovs_firewall._add_flows(deferred_obj, fake_port1)
-            self.assertTrue(add_flow_with_range_fn.called)
+            # This check has been added to support VXLAN usecase
+            if self.ovs_firewall._get_port_vlan(fake_port1['id']):
+                self.assertTrue(add_flow_with_range_fn.called)
 
     def test_setup_flows(self):
         deferred_obj = mock.Mock()
