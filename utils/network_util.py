@@ -239,8 +239,8 @@ def wait_on_dvs_portgroup(session, vm_ref, pg_name):
                                                  network._type,
                                                  "config")
                     if props.name in pg_name:
-                        LOG.debug("DistributedVirtualPortgroup %s ",
-                                  "created" % pg_name)
+                        LOG.debug("DistributedVirtualPortgroup created %s "
+                                  % pg_name)
                         return True
         count += 1
         LOG.debug("Portgroup %s not created yet. Retrying again "
